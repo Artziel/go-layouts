@@ -33,15 +33,21 @@ func (l *ExcelLayout) ParseStruct(r interface{}) []Error {
 						switch reflect.TypeOf(f.Interface()).Elem().Kind() {
 						case reflect.String:
 							if _, err := parseStringRules(v, tags); err != nil {
-								errors = append(errors, Error{RowIndex: 0, Column: tags.Column, Error: err})
+								for _, e := range err {
+									errors = append(errors, Error{RowIndex: 0, Column: tags.Column, Error: e})
+								}
 							}
 						case reflect.Float32, reflect.Float64:
 							if _, err := parseFloat64Rules(v, tags); err != nil {
-								errors = append(errors, Error{RowIndex: 0, Column: tags.Column, Error: err})
+								for _, e := range err {
+									errors = append(errors, Error{RowIndex: 0, Column: tags.Column, Error: e})
+								}
 							}
 						case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
 							if _, err := parseIntRules(v, tags); err != nil {
-								errors = append(errors, Error{RowIndex: 0, Column: tags.Column, Error: err})
+								for _, e := range err {
+									errors = append(errors, Error{RowIndex: 0, Column: tags.Column, Error: e})
+								}
 							}
 						}
 					}
@@ -50,15 +56,21 @@ func (l *ExcelLayout) ParseStruct(r interface{}) []Error {
 				}
 			case reflect.String:
 				if _, err := parseStringRules(value, tags); err != nil {
-					errors = append(errors, Error{RowIndex: 0, Error: err, Column: tags.Column})
+					for _, e := range err {
+						errors = append(errors, Error{RowIndex: 0, Column: tags.Column, Error: e})
+					}
 				}
 			case reflect.Float32, reflect.Float64:
 				if _, err := parseFloat64Rules(value, tags); err != nil {
-					errors = append(errors, Error{RowIndex: 0, Error: err, Column: tags.Column})
+					for _, e := range err {
+						errors = append(errors, Error{RowIndex: 0, Column: tags.Column, Error: e})
+					}
 				}
 			case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
 				if _, err := parseIntRules(value, tags); err != nil {
-					errors = append(errors, Error{RowIndex: 0, Error: err, Column: tags.Column})
+					for _, e := range err {
+						errors = append(errors, Error{RowIndex: 0, Column: tags.Column, Error: e})
+					}
 				}
 			}
 
@@ -100,19 +112,25 @@ func (l *ExcelLayout) ParseCells(r interface{}, cells []string) []Error {
 							switch reflect.TypeOf(f.Interface()).Elem().Kind() {
 							case reflect.String:
 								if val, err := parseStringRules(v, tags); err != nil {
-									errors = append(errors, Error{RowIndex: rowIndex, Column: tags.Column, Error: err})
+									for _, e := range err {
+										errors = append(errors, Error{RowIndex: rowIndex, Column: tags.Column, Error: e})
+									}
 								} else {
 									f.Set(reflect.Append(f, reflect.ValueOf(val)))
 								}
 							case reflect.Float32, reflect.Float64:
 								if val, err := parseFloat64Rules(v, tags); err != nil {
-									errors = append(errors, Error{RowIndex: rowIndex, Column: tags.Column, Error: err})
+									for _, e := range err {
+										errors = append(errors, Error{RowIndex: 0, Column: tags.Column, Error: e})
+									}
 								} else {
 									f.Set(reflect.Append(f, reflect.ValueOf(val)))
 								}
 							case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
 								if val, err := parseIntRules(v, tags); err != nil {
-									errors = append(errors, Error{RowIndex: rowIndex, Column: tags.Column, Error: err})
+									for _, e := range err {
+										errors = append(errors, Error{RowIndex: 0, Column: tags.Column, Error: e})
+									}
 								} else {
 									f.Set(reflect.Append(f, reflect.ValueOf(val)))
 								}
@@ -123,19 +141,25 @@ func (l *ExcelLayout) ParseCells(r interface{}, cells []string) []Error {
 					}
 				case reflect.String:
 					if val, err := parseStringRules(value, tags); err != nil {
-						errors = append(errors, Error{RowIndex: rowIndex, Error: err, Column: tags.Column})
+						for _, e := range err {
+							errors = append(errors, Error{RowIndex: rowIndex, Error: e, Column: tags.Column})
+						}
 					} else {
 						f.SetString(val)
 					}
 				case reflect.Float32, reflect.Float64:
 					if val, err := parseFloat64Rules(value, tags); err != nil {
-						errors = append(errors, Error{RowIndex: rowIndex, Error: err, Column: tags.Column})
+						for _, e := range err {
+							errors = append(errors, Error{RowIndex: 0, Column: tags.Column, Error: e})
+						}
 					} else {
 						f.SetFloat(float64(val))
 					}
 				case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
 					if val, err := parseIntRules(value, tags); err != nil {
-						errors = append(errors, Error{RowIndex: rowIndex, Error: err, Column: tags.Column})
+						for _, e := range err {
+							errors = append(errors, Error{RowIndex: 0, Column: tags.Column, Error: e})
+						}
 					} else {
 						f.SetInt(int64(val))
 					}

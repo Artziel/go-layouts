@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-func TestExcelRowParser(t *testing.T) {
+func TestExcelRowCellsParser(t *testing.T) {
 
 	tests := []RowParserTests{
 		{
@@ -24,6 +24,24 @@ func TestExcelRowParser(t *testing.T) {
 			},
 			errExpected: nil,
 		},
+		{
+			input: []string{
+				"1", "xxx@yyy.com", "12345678", "https://www.asdasd.com", "Artziel Narvaiza",
+				"xxx@yyy.com", "44",
+			},
+			expected: TestRow{
+				ID:       1,
+				Username: "xxx@yyy.com",
+				Password: "12345678",
+				Avatar:   "https://www.asdasd.com",
+				Fullname: "Artziel Narvaiza",
+				Email:    "xxx@yyy.com",
+				Age:      44,
+			},
+			errExpected: []error{
+				ErrNotUnique,
+			},
+		},
 	}
 
 	l := ExcelLayout{}
@@ -41,12 +59,14 @@ func TestExcelRowParser(t *testing.T) {
 				}
 			}
 		} else {
-			if errs != nil && test.errExpected != nil {
-				t.Errorf("Test %d: Error expected, recive none\n", i)
+			if errs == nil && test.errExpected != nil {
+				t.Errorf("Test %d: %d Errors expected, recive none\n", len(test.errExpected), i)
+			} else if (test.errExpected != nil && errs != nil) && (len(errs) != len(test.errExpected)) {
+				t.Errorf("Test %d: %d Errors expected, Recive: %d\n", i, len(test.errExpected), len(errs))
 			} else {
 				for _, e := range errs {
 					if !test.IsErrorExpected(e.Error) {
-						t.Errorf("Test %d: Error not expected, recived: %s\n", i, ErrToMessage(&e))
+						t.Errorf("Test %d: Error not expected, Recived: %s\n", i, ErrToMessage(&e))
 					}
 				}
 			}

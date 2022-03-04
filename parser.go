@@ -172,94 +172,107 @@ func parseOptions(tags string) (fieldTags, error) {
 	return ft, nil
 }
 
-func parseStringRules(v string, tags fieldTags) (string, error) {
+func parseStringRules(v string, tags fieldTags) (string, []error) {
 	value := strings.TrimSpace(v)
+	errors := []error{}
 	if tags.Required && len(value) == 0 {
-		return "", ErrRequiredValueRuleFail
+		errors = append(errors, ErrRequiredValueRuleFail)
 	}
 	if tags.hasMin {
-		return "", ErrTagMinForbidden
+		errors = append(errors, ErrTagMinForbidden)
 	}
 	if tags.hasMax {
-		return "", ErrTagMaxForbidden
+		errors = append(errors, ErrTagMaxForbidden)
 	}
 	if len(value) > 0 {
 
 		if tags.hasMinLength && (int(tags.MinLength) > len(value)) {
-			return "", ErrMinLengthValueRuleFail
+			errors = append(errors, ErrMinLengthValueRuleFail)
 		}
 		if tags.hasMaxLength && (int(tags.MaxLength) < len(value)) {
-			return "", ErrMaxLengthValueRuleFail
+			errors = append(errors, ErrMaxLengthValueRuleFail)
 		}
 		if tags.Url {
 			if _, err := url.ParseRequestURI(value); err != nil {
-				return "", ErrUrlValueRuleFail
+				errors = append(errors, ErrUrlValueRuleFail)
 			}
 		}
 		if tags.Email {
 			if _, err := mail.ParseAddress(value); err != nil {
-				return "", ErrEmailValueRuleFail
+				errors = append(errors, ErrEmailValueRuleFail)
 			}
 		}
 		if tags.Regex != "" {
 			regex, err := regexp.Compile(tags.Regex)
 			if err != nil {
-				return "", ErrRegexInvalid
+				errors = append(errors, ErrRegexInvalid)
 			}
 			if match := regex.MatchString(value); !match {
-				return "", ErrRegexRuleFail
+				errors = append(errors, ErrRegexRuleFail)
 			}
 		}
+	}
+	if len(errors) > 0 {
+		return "", errors
 	}
 	return value, nil
 }
 
-func parseIntRules(v string, tags fieldTags) (int64, error) {
+func parseIntRules(v string, tags fieldTags) (int64, []error) {
 	value := strings.TrimSpace(v)
+	errors := []error{}
 	if tags.Required && value == "" {
-		return 0, ErrRequiredValueRuleFail
+		errors = append(errors, ErrRequiredValueRuleFail)
 	}
 	if tags.hasMinLength {
-		return 0, ErrTagMinLengthForbidden
+		errors = append(errors, ErrTagMinLengthForbidden)
 	}
 	if tags.hasMaxLength {
-		return 0, ErrTagMaxLengthForbidden
+		errors = append(errors, ErrTagMaxLengthForbidden)
 	}
 
 	val, err := strconv.Atoi(value)
 	if err != nil {
-		return 0, ErrIntegerInvalid
+		errors = append(errors, ErrIntegerInvalid)
 	}
 	if tags.hasMin && int(tags.Min) > val {
-		return 0, ErrMinValueRuleFail
+		errors = append(errors, ErrMinValueRuleFail)
 	}
 	if tags.hasMax && int(tags.Max) < val {
-		return 0, ErrMaxValueRuleFail
+		errors = append(errors, ErrMaxValueRuleFail)
+	}
+	if len(errors) > 0 {
+		return 0, errors
 	}
 	return int64(val), nil
 }
 
-func parseFloat64Rules(v string, tags fieldTags) (float64, error) {
+func parseFloat64Rules(v string, tags fieldTags) (float64, []error) {
 	value := strings.TrimSpace(v)
+	errors := []error{}
 	if tags.Required && value == "" {
-		return 0, ErrRequiredValueRuleFail
+		errors = append(errors, ErrRequiredValueRuleFail)
 	}
 	if tags.hasMinLength {
-		return 0, ErrTagMinLengthForbidden
+		errors = append(errors, ErrTagMinLengthForbidden)
 	}
 	if tags.hasMaxLength {
-		return 0, ErrTagMaxLengthForbidden
+		errors = append(errors, ErrTagMaxLengthForbidden)
 	}
 
 	val, err := strconv.ParseFloat(value, 64)
 	if err != nil {
-		return 0, ErrDecimalInvalid
+		errors = append(errors, ErrDecimalInvalid)
 	}
 	if tags.hasMin && tags.Min > val {
-		return 0, ErrMinValueRuleFail
+		errors = append(errors, ErrMinValueRuleFail)
 	}
 	if tags.hasMax && tags.Max < val {
-		return 0, ErrMaxValueRuleFail
+		errors = append(errors, ErrMaxValueRuleFail)
+	}
+
+	if len(errors) > 0 {
+		return 0.0, errors
 	}
 
 	return val, nil

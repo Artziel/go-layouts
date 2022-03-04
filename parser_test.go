@@ -117,5 +117,4 @@ func TestTagsParserOptionsValues(t *testing.T) {
 		}
 
 	}
-
 }

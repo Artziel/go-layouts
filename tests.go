@@ -11,7 +11,7 @@ type TestRow struct {
 	Password string `excelLayout:"column:C,required,minLength:8"`
 	Avatar   string `excelLayout:"column:D,url"`
 	Fullname string `excelLayout:"column:E,required,maxLength:25"`
-	Email    string `excelLayout:"column:F,required,email"`
+	Email    string `excelLayout:"column:F,required,email,unique"`
 	Age      int    `excelLayout:"column:G,required,min:18,max:50"`
 	Key      string `excelLayout:"column:H,required,regex:p([a-z]+)ch"`
 }
