@@ -4,6 +4,17 @@ import (
 	"fmt"
 )
 
+type TestRow struct {
+	Row
+	ID       int    `excelLayout:"column:A,required,min:1"`
+	Username string `excelLayout:"column:B,required,minLength:6"`
+	Password string `excelLayout:"column:C,required,minLength:8"`
+	Avatar   string `excelLayout:"column:D,url"`
+	Fullname string `excelLayout:"column:E,required,maxLength:25"`
+	Email    string `excelLayout:"column:F,required,email"`
+	Age      int    `excelLayout:"column:G,required,min:18,max:50"`
+}
+
 /**
  * Field Tag Parser Test struct
  */
@@ -76,16 +87,6 @@ func (pt *FiledTagsParserTests) compareTo(ft *fieldTags) (bool, []string) {
 	}
 
 	return len(errors) == 0, errors
-}
-
-type TestRow struct {
-	Row
-	ID       int    `excelLayout:"column:A,required,min:1"`
-	Username string `excelLayout:"column:B,required,minLength:6"`
-	Password string `excelLayout:"column:C,required,minLength:8"`
-	Avatar   string `excelLayout:"column:D,url"`
-	Fullname string `excelLayout:"column:E,required"`
-	Age      int    `excelLayout:"column:F,required,min:18,max:50"`
 }
 
 /**
@@ -162,7 +163,6 @@ func (rt *RowParserTests) IsErrorExpected(e error) bool {
 
 type StructParserTests struct {
 	input       TestRow
-	expected    TestRow
 	errExpected []error
 }
 

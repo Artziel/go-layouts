@@ -9,13 +9,17 @@ func TestExcelRowParser(t *testing.T) {
 
 	tests := []RowParserTests{
 		{
-			input: []string{"1", "artziel@gmail.com", "12345678", "https://www.asdasd.com", "Artziel Narvaiza", "44"},
+			input: []string{
+				"1", "xxx@yyy.com", "12345678", "https://www.asdasd.com", "Artziel Narvaiza",
+				"xxx@yyy.com", "44",
+			},
 			expected: TestRow{
 				ID:       1,
-				Username: "artziel@gmail.com",
+				Username: "xxx@yyy.com",
 				Password: "12345678",
 				Avatar:   "https://www.asdasd.com",
 				Fullname: "Artziel Narvaiza",
+				Email:    "xxx@yyy.com",
 				Age:      44,
 			},
 			errExpected: nil,
@@ -56,21 +60,36 @@ func TestExcelStructParser(t *testing.T) {
 		{
 			input: TestRow{
 				ID:       1,
-				Username: "artziel@gmail.com",
+				Username: "xxx@yyy.com",
 				Password: "123456",
 				Avatar:   ".asdasd.com",
 				Fullname: "Artziel Narvaiza",
-				Age:      44,
+				Email:    "xxx@yyy.com",
+				Age:      12,
 			},
-			expected: TestRow{
+			errExpected: []error{
+				ErrMinLengthValueRuleFail,
+				ErrUrlValueRuleFail,
+				ErrMinValueRuleFail,
+			},
+		},
+		{
+			input: TestRow{
 				ID:       1,
-				Username: "artziel@gmail.com",
-				Password: "12345678",
-				Avatar:   "https://www.asdasd.com",
-				Fullname: "Artziel Narvaiza",
-				Age:      44,
+				Username: "xxx@yyy.com",
+				Password: "",
+				Avatar:   ".asdasd.com",
+				Fullname: "Artziel Ángel Narvaiza González",
+				Email:    "xxx@yyy.com",
+				Age:      100,
 			},
-			errExpected: nil,
+			errExpected: []error{
+				ErrMinLengthValueRuleFail,
+				ErrUrlValueRuleFail,
+				ErrMaxValueRuleFail,
+				ErrRequiredValueRuleFail,
+				ErrMaxLengthValueRuleFail,
+			},
 		},
 	}
 
