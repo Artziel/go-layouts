@@ -2,6 +2,7 @@ package Layouts
 
 import (
 	"errors"
+	"fmt"
 	"reflect"
 	"strings"
 
@@ -15,7 +16,68 @@ type ExcelLayout struct {
 	Layout
 }
 
-func (l *Layout) Parse(r interface{}, cells []string) (bool, []Error) {
+func (l *Layout) AddRow(r interface{}) []error {
+
+	return nil
+}
+
+func (l *Layout) ParseStruct(r interface{}) []Error {
+	s := reflect.ValueOf(r)
+	errors := []Error{}
+
+	for i := 0; i < s.NumField(); i++ {
+		tags, err := parseOptions(string(s.Type().Field(i).Tag))
+		if err == nil {
+			f := s.Field(i)
+			value := fmt.Sprintf("%v", f)
+			switch f.Kind() {
+			case reflect.Slice:
+				if tags.CommaSeparatedValue {
+					values := strings.Split(value, ",")
+					for _, v := range values {
+						switch reflect.TypeOf(f.Interface()).Elem().Kind() {
+						case reflect.String:
+							if _, err := parseStringRules(v, tags); err != nil {
+								errors = append(errors, Error{RowIndex: 0, Column: tags.Column, Error: err})
+							}
+						case reflect.Float32, reflect.Float64:
+							if _, err := parseFloat64Rules(v, tags); err != nil {
+								errors = append(errors, Error{RowIndex: 0, Column: tags.Column, Error: err})
+							}
+						case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+							if _, err := parseIntRules(v, tags); err != nil {
+								errors = append(errors, Error{RowIndex: 0, Column: tags.Column, Error: err})
+							}
+						}
+					}
+				} else {
+					errors = append(errors, Error{RowIndex: 0, Column: tags.Column, Error: ErrCommaSeparatedInvalid})
+				}
+			case reflect.String:
+				if _, err := parseStringRules(value, tags); err != nil {
+					errors = append(errors, Error{RowIndex: 0, Error: err, Column: tags.Column})
+				}
+			case reflect.Float32, reflect.Float64:
+				if _, err := parseFloat64Rules(value, tags); err != nil {
+					errors = append(errors, Error{RowIndex: 0, Error: err, Column: tags.Column})
+				}
+			case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+				if _, err := parseIntRules(value, tags); err != nil {
+					errors = append(errors, Error{RowIndex: 0, Error: err, Column: tags.Column})
+				}
+			}
+
+		}
+	}
+
+	if len(errors) > 0 {
+		return errors
+	}
+
+	return nil
+}
+
+func (l *Layout) ParseCells(r interface{}, cells []string) (bool, []Error) {
 	if l.uniques == nil {
 		l.uniques = map[string]int{}
 	}
@@ -129,7 +191,7 @@ func (l *ExcelLayout) ReadFile(rowType interface{}, filePath string) error {
 			f := reflect.Indirect(reflect.ValueOf(elItem)).FieldByName("Index")
 			f.SetInt(int64(i) + 1)
 
-			if ok, errors := l.Parse(elItem, row); !ok {
+			if ok, errors := l.ParseCells(elItem, row); !ok {
 				hasErrors = true
 				l.errors = append(l.errors, errors...)
 			}

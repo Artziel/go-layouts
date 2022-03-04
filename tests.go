@@ -159,3 +159,26 @@ func (rt *RowParserTests) IsErrorExpected(e error) bool {
 
 	return false
 }
+
+type StructParserTests struct {
+	input       TestRow
+	expected    TestRow
+	errExpected []error
+}
+
+/**
+ * Check if an error is in expected errors list
+ */
+func (rt *StructParserTests) IsErrorExpected(e error) bool {
+	if rt.errExpected == nil {
+		return false
+	}
+
+	for _, err := range rt.errExpected {
+		if err == e {
+			return true
+		}
+	}
+
+	return false
+}

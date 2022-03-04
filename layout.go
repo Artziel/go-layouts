@@ -78,7 +78,7 @@ type Layout struct {
 
 func (l *Layout) CountRows() int {
 	//d := l.rows.([]interface{})
-	return len(l.rows.([]interface{}))
+	return 0
 }
 
 func (l *Layout) GetRows() interface{} {
