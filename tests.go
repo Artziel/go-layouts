@@ -13,6 +13,7 @@ type TestRow struct {
 	Fullname string `excelLayout:"column:E,required,maxLength:25"`
 	Email    string `excelLayout:"column:F,required,email"`
 	Age      int    `excelLayout:"column:G,required,min:18,max:50"`
+	Key      string `excelLayout:"column:H,required,regex:p([a-z]+)ch"`
 }
 
 /**

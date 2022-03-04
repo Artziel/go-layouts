@@ -66,11 +66,13 @@ func TestExcelStructParser(t *testing.T) {
 				Fullname: "Artziel Narvaiza",
 				Email:    "xxx@yyy.com",
 				Age:      12,
+				Key:      "pear",
 			},
 			errExpected: []error{
 				ErrMinLengthValueRuleFail,
 				ErrUrlValueRuleFail,
 				ErrMinValueRuleFail,
+				ErrRegexRuleFail,
 			},
 		},
 		{
@@ -82,6 +84,7 @@ func TestExcelStructParser(t *testing.T) {
 				Fullname: "Artziel Ángel Narvaiza González",
 				Email:    "xxx@yyy.com",
 				Age:      100,
+				Key:      "peach",
 			},
 			errExpected: []error{
 				ErrMinLengthValueRuleFail,

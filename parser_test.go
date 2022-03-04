@@ -86,18 +86,6 @@ func TestTagsParserOptionsValues(t *testing.T) {
 			},
 			nil,
 		},
-		{
-			`excelLayout:"column:A"`, fieldTags{Column: "A"}, nil,
-		},
-		{
-			`excelLayout:"column:A"`, fieldTags{Column: "A"}, nil,
-		},
-		{
-			`excelLayout:"column:A"`, fieldTags{Column: "A"}, nil,
-		},
-		{
-			`excelLayout:"column:A"`, fieldTags{Column: "A"}, nil,
-		},
 	}
 
 	for i, test := range tests {
