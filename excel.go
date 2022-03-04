@@ -72,7 +72,7 @@ func (l *ExcelLayout) ParseStruct(r interface{}) []Error {
 	return nil
 }
 
-func (l *ExcelLayout) ParseCells(r interface{}, cells []string) (bool, []Error) {
+func (l *ExcelLayout) ParseCells(r interface{}, cells []string) []Error {
 	if l.uniques == nil {
 		l.uniques = map[string]int{}
 	}
@@ -153,7 +153,11 @@ func (l *ExcelLayout) ParseCells(r interface{}, cells []string) (bool, []Error) 
 		}
 	}
 
-	return len(errors) == 0, errors
+	if len(errors) > 0 {
+		return errors
+	}
+
+	return nil
 }
 
 func (l *ExcelLayout) ReadFile(rowType interface{}, filePath string) error {
@@ -186,9 +190,9 @@ func (l *ExcelLayout) ReadFile(rowType interface{}, filePath string) error {
 			f := reflect.Indirect(reflect.ValueOf(elItem)).FieldByName("Index")
 			f.SetInt(int64(i) + 1)
 
-			if ok, errors := l.ParseCells(elItem, row); !ok {
+			if err := l.ParseCells(elItem, row); err != nil {
 				hasErrors = true
-				l.errors = append(l.errors, errors...)
+				l.errors = append(l.errors, err...)
 			}
 			elSlice = append(elSlice, elItem)
 		}

@@ -34,17 +34,17 @@ func TestExcelRowParser(t *testing.T) {
 		f := reflect.Indirect(reflect.ValueOf(elItem)).FieldByName("Index")
 		f.SetInt(int64(i) + 1)
 		result := elItem.(*TestRow)
-		if ok, errors := l.ParseCells(elItem, test.input); ok {
+		if errs := l.ParseCells(elItem, test.input); errs == nil {
 			if success, errors := test.compareTo(result); !success {
 				for _, e := range errors {
 					t.Errorf("Test %d: %s\n", i, e)
 				}
 			}
 		} else {
-			if len(errors) > 0 && test.errExpected != nil {
+			if errs != nil && test.errExpected != nil {
 				t.Errorf("Test %d: Error expected, recive none\n", i)
 			} else {
-				for _, e := range errors {
+				for _, e := range errs {
 					if !test.IsErrorExpected(e.Error) {
 						t.Errorf("Test %d: Error not expected, recived: %s\n", i, ErrToMessage(&e))
 					}
