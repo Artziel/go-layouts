@@ -155,6 +155,12 @@ func parseOptions(tags string) (fieldTags, error) {
 
 	}
 
+	if ft.Regex != "" {
+		if _, err := regexp.Compile(ft.Regex); err != nil {
+			return ft, ErrRegexInvalid
+		}
+	}
+
 	if (ft.hasMax && ft.hasMin) && (ft.Max < ft.Min) {
 		return ft, ErrTagInvalidMaxMinValues
 	}

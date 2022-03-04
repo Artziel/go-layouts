@@ -86,6 +86,14 @@ func TestTagsParserOptionsValues(t *testing.T) {
 			},
 			nil,
 		},
+		{
+			`excelLayout:"column:a,min:1,max:1,required,commaseparatedvalue,email,regex:...\\\,url,unique"`,
+			fieldTags{
+				Column: "A", Min: 1, Max: 1, Required: true, CommaSeparatedValue: true, Email: true,
+				Regex: `...\\\`, Url: true, Unique: true,
+			},
+			ErrRegexInvalid,
+		},
 	}
 
 	for i, test := range tests {
@@ -109,4 +117,5 @@ func TestTagsParserOptionsValues(t *testing.T) {
 		}
 
 	}
+
 }
