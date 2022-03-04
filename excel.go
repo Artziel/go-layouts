@@ -16,12 +16,7 @@ type ExcelLayout struct {
 	Layout
 }
 
-func (l *Layout) AddRow(r interface{}) []error {
-
-	return nil
-}
-
-func (l *Layout) ParseStruct(r interface{}) []Error {
+func (l *ExcelLayout) ParseStruct(r interface{}) []Error {
 	s := reflect.ValueOf(r)
 	errors := []Error{}
 
@@ -77,7 +72,7 @@ func (l *Layout) ParseStruct(r interface{}) []Error {
 	return nil
 }
 
-func (l *Layout) ParseCells(r interface{}, cells []string) (bool, []Error) {
+func (l *ExcelLayout) ParseCells(r interface{}, cells []string) (bool, []Error) {
 	if l.uniques == nil {
 		l.uniques = map[string]int{}
 	}
@@ -165,7 +160,7 @@ func (l *ExcelLayout) ReadFile(rowType interface{}, filePath string) error {
 
 	hasErrors := false
 	elType := reflect.TypeOf(rowType)
-	elSlice := reflect.MakeSlice(reflect.SliceOf(reflect.TypeOf(rowType)), 0, 0)
+	elSlice := []interface{}{}
 
 	xlsx, err := excelize.OpenFile(filePath)
 	if err != nil {
@@ -195,10 +190,10 @@ func (l *ExcelLayout) ReadFile(rowType interface{}, filePath string) error {
 				hasErrors = true
 				l.errors = append(l.errors, errors...)
 			}
-			elSlice = reflect.Append(elSlice, reflect.Indirect(reflect.ValueOf(elItem)))
+			elSlice = append(elSlice, elItem)
 		}
 	}
-	l.rows = elSlice.Interface()
+	l.rows = elSlice
 	if hasErrors {
 		return ErrValidationFail
 	}

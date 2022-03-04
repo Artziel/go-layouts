@@ -71,17 +71,16 @@ func ErrToMessage(e *Error) string {
  * Layout base structure
  */
 type Layout struct {
-	rows    interface{}
+	rows    []interface{}
 	uniques map[string]int
 	errors  []Error
 }
 
 func (l *Layout) CountRows() int {
-	//d := l.rows.([]interface{})
-	return 0
+	return len(l.rows)
 }
 
-func (l *Layout) GetRows() interface{} {
+func (l *Layout) GetRows() []interface{} {
 	return l.rows
 }
 

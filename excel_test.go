@@ -122,10 +122,9 @@ func TestExcelFileRead(t *testing.T) {
 	fileName := "./sample/sample.xlsx"
 
 	err := l.ReadFile(TestRow{}, fileName)
-	rows := l.GetRows().([]TestRow)
 	if err == ErrNoSheetFound || err == ErrValidationFail {
 		t.Errorf("Test 0: Read file \"%s\" fail. Error: %s ", fileName, err.Error())
-	} else if len(rows) != 1 {
-		t.Errorf("Test 1: Expected one row, Recived: %d", len(rows))
+	} else if l.CountRows() != 1 {
+		t.Errorf("Test 1: Expected one row, Recived: %d", l.CountRows())
 	}
 }

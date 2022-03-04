@@ -26,10 +26,10 @@ func main() {
 			fmt.Printf("Row %d) %s\n", e.RowIndex, Layouts.ErrToMessage(&e))
 		}
 	} else {
-		rows := l.GetRows().([]MySampleRow)
-
+		rows := l.GetRows()
 		for i, r := range rows {
-			fmt.Printf("%d) ID:%v, Username: %v\n", i, r.ID, r.Username)
+			row := r.(Layouts.TestRow)
+			fmt.Printf("%d) ID:%v, Username: %v\n", i, row.ID, row.Username)
 		}
 	}
 }
