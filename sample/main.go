@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	Layouts "gitlab.com/artziel/golang-layouts"
+	Layouts "gitlab.com/artziel/go-layouts"
 )
 
 type MySampleRow struct {
