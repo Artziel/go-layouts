@@ -1,4 +1,4 @@
-module gitlab.com/artziel/golang-layouts
+module gitlab.com/artziel/go-layouts
 
 go 1.17
 
